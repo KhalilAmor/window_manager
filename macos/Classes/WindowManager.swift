@@ -53,7 +53,7 @@ extension NSRect {
 
 import Cocoa
 
-public class WindowManager: NSObject, NSWindowDelegate {
+public class WindowManager: NSObject, NSWindowDelegate,NSView {
     public var onEvent:((String) -> Void)?
     
     private var _mainWindow: NSWindow?
