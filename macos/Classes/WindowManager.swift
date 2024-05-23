@@ -51,6 +51,8 @@ extension NSRect {
     }
 }
 
+import Cocoa
+
 public class WindowManager: NSObject, NSWindowDelegate {
     public var onEvent:((String) -> Void)?
     
@@ -62,6 +64,10 @@ public class WindowManager: NSObject, NSWindowDelegate {
         set {
             _mainWindow = newValue
             _mainWindow?.delegate = self
+            
+            // Add NSTrackingArea to the window's content view
+            let trackingArea = NSTrackingArea(rect: _mainWindow!.contentView!.bounds, options: [.mouseEnteredAndExited, .mouseMoved, .activeInKeyWindow], owner: self, userInfo: nil)
+            _mainWindow!.contentView?.addTrackingArea(trackingArea)
         }
     }
     
@@ -598,5 +604,21 @@ public class WindowManager: NSObject, NSWindowDelegate {
         if (onEvent != nil) {
             onEvent!(eventName)
         }
+    }
+    
+    // Override mouseEntered, mouseExited, and mouseMoved methods
+    override public func mouseEntered(with event: NSEvent) {
+        super.mouseEntered(with: event)
+        _emitEvent("hovered")
+    }
+    
+    override public func mouseExited(with event: NSEvent) {
+        super.mouseExited(with: event)
+        _emitEvent("unhovered")
+    }
+    
+    override public func mouseMoved(with event: NSEvent) {
+        super.mouseMoved(with: event)
+        _emitEvent("mouseMoved")
     }
 }

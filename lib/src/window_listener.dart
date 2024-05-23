@@ -52,6 +52,10 @@ abstract mixin class WindowListener {
   /// @platforms windows
   void onWindowUndocked() {}
 
+  void onWindowHovered() {}
+
+  void onWindowUnhovered() {}
+
   /// Emitted all events.
   void onWindowEvent(String eventName) {}
 }

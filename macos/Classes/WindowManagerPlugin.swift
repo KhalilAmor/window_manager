@@ -274,4 +274,6 @@ public class WindowManagerPlugin: NSObject, FlutterPlugin {
         ]
         channel.invokeMethod("onEvent", arguments: args, result: nil)
     }
+    
+    
 }

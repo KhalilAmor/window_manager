@@ -28,6 +28,8 @@ const kWindowEventLeaveFullScreen = 'leave-full-screen';
 
 const kWindowEventDocked = 'docked';
 const kWindowEventUndocked = 'undocked';
+const kWindowEventHovered = 'hovered';
+const kWindowEventUnhovered = 'unhovered';
 
 enum DockSide { left, right }
 
@@ -71,6 +73,8 @@ class WindowManager {
         kWindowEventLeaveFullScreen: listener.onWindowLeaveFullScreen,
         kWindowEventDocked: listener.onWindowDocked,
         kWindowEventUndocked: listener.onWindowUndocked,
+        kWindowEventHovered: listener.onWindowHovered,
+        kWindowEventUnhovered: listener.onWindowUnhovered
       };
       funcMap[eventName]?.call();
     }
