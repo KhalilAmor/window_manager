@@ -51,7 +51,6 @@ extension NSRect {
     }
 }
 
-
 public class WindowManager: NSObject, NSWindowDelegate {
     public var onEvent:((String) -> Void)?
     
@@ -68,6 +67,7 @@ public class WindowManager: NSObject, NSWindowDelegate {
             if let contentView = _mainWindow?.contentView {
                 let customContentView = CustomContentView(frame: contentView.bounds)
                 customContentView.onEvent = self.onEvent
+                customContentView.autoresizingMask = [.width, .height]
                 contentView.addSubview(customContentView)
             }
         }
@@ -619,16 +619,16 @@ class CustomContentView: NSView {
             removeTrackingArea(trackingArea)
         }
         
-        let trackingArea = NSTrackingArea(rect: bounds, options: [.mouseEnteredAndExited, .mouseMoved, .activeInKeyWindow], owner: self, userInfo: nil)
+        let trackingArea = NSTrackingArea(rect: bounds, options: [.mouseEnteredAndExited, .mouseMoved, .activeAlways], owner: self, userInfo: nil)
         addTrackingArea(trackingArea)
     }
     
     override func mouseEntered(with event: NSEvent) {
-        onEvent?("hovered")
+        onEvent?("mouseEntered")
     }
     
     override func mouseExited(with event: NSEvent) {
-        onEvent?("unhovered")
+        onEvent?("mouseExited")
     }
     
     override func mouseMoved(with event: NSEvent) {
