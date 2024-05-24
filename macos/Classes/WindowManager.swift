@@ -51,9 +51,8 @@ extension NSRect {
     }
 }
 
-import Cocoa
 
-public class WindowManager: NSObject, NSWindowDelegate,NSView {
+public class WindowManager: NSObject, NSWindowDelegate {
     public var onEvent:((String) -> Void)?
     
     private var _mainWindow: NSWindow?
@@ -65,9 +64,12 @@ public class WindowManager: NSObject, NSWindowDelegate,NSView {
             _mainWindow = newValue
             _mainWindow?.delegate = self
             
-            // Add NSTrackingArea to the window's content view
-            let trackingArea = NSTrackingArea(rect: _mainWindow!.contentView!.bounds, options: [.mouseEnteredAndExited, .mouseMoved, .activeInKeyWindow], owner: self, userInfo: nil)
-            _mainWindow!.contentView?.addTrackingArea(trackingArea)
+            // Add CustomContentView to the window's content view
+            if let contentView = _mainWindow?.contentView {
+                let customContentView = CustomContentView(frame: contentView.bounds)
+                customContentView.onEvent = self.onEvent
+                contentView.addSubview(customContentView)
+            }
         }
     }
     
@@ -605,20 +607,31 @@ public class WindowManager: NSObject, NSWindowDelegate,NSView {
             onEvent!(eventName)
         }
     }
+}
+
+class CustomContentView: NSView {
+    var onEvent: ((String) -> Void)?
     
-    // Override mouseEntered, mouseExited, and mouseMoved methods
-    override public func mouseEntered(with event: NSEvent) {
-        super.mouseEntered(with: event)
-        _emitEvent("hovered")
+    override func updateTrackingAreas() {
+        super.updateTrackingAreas()
+        
+        for trackingArea in trackingAreas {
+            removeTrackingArea(trackingArea)
+        }
+        
+        let trackingArea = NSTrackingArea(rect: bounds, options: [.mouseEnteredAndExited, .mouseMoved, .activeInKeyWindow], owner: self, userInfo: nil)
+        addTrackingArea(trackingArea)
     }
     
-    override public func mouseExited(with event: NSEvent) {
-        super.mouseExited(with: event)
-        _emitEvent("unhovered")
+    override func mouseEntered(with event: NSEvent) {
+        onEvent?("hovered")
     }
     
-    override public func mouseMoved(with event: NSEvent) {
-        super.mouseMoved(with: event)
-        _emitEvent("mouseMoved")
+    override func mouseExited(with event: NSEvent) {
+        onEvent?("unhovered")
+    }
+    
+    override func mouseMoved(with event: NSEvent) {
+        onEvent?("mouseMoved")
     }
 }
